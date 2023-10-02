@@ -277,6 +277,8 @@ def chat():
       userdict = json.load(file)
     for user in userdict:
       userdict[user]['notifs'] += 1
+    with open(ROOT_DIR + "users.json", 'w') as file:
+      json.dump(userdict, file)
     return "OK"
   else:
     if "user" in session:
