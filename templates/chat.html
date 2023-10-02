@@ -69,7 +69,24 @@
   
 </script>
 <script>
-    function checkChat
+    function checknotifs() {
+      xhr = new XMLHttpRequest();
+
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+          var string = xhr.responseText;
+
+          var bool = false;
+          if ((string + '').toLowerCase() === 'true') {
+            bool = true;
+          }
+
+          if (bool == true) {
+            
+          }
+        }
+      }
+    }
     function addContents() {
         var xhr = new XMLHttpRequest();
 
