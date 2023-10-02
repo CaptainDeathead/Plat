@@ -276,10 +276,10 @@ def chat():
     with open(ROOT_DIR + "users.json", 'r') as file:
       userdict = json.load(file)
     for user in userdict:
-      userdict[user]['notifs'] += 1
+      userdict[user]['notif'] += 1
     with open(ROOT_DIR + "users.json", 'w') as file:
       json.dump(userdict, file)
-    return "OK"
+    return redirect(url_for("chat"))
   else:
     if "user" in session:
       user = session["user"]
@@ -300,7 +300,7 @@ def checknotifs():
   user = session['user']
   with open(ROOT_DIR + "users.json", 'r') as file:
     userdict = json.load(file)
-  notifs = int(userdict[user]['notifs'])
+  notifs = int(userdict[user]['notif'])
   if notifs != 0:
     return True
   else:
@@ -313,7 +313,7 @@ def getnewmsg():
     userdict = json.load(file)
   with open(ROOT_DIR + "chat.json", 'r') as file:
     chatdict = json.load(file)
-  new = int(userdict[user]['notifs'])
+  new = int(userdict[user]['notif'])
   chatitems = list(chatdict.keys())
   newitems = {}
   lastitems = chatitems[-new:]
@@ -322,7 +322,7 @@ def getnewmsg():
     newitems[item] = value
   with open(ROOT_DIR + "users.json", 'r') as file:
     userdict = json.load(file)
-  userdict[user]['notifs'] = 0
+  userdict[user]['notif'] = 0
   with open(ROOT_DIR + "users.json", 'w') as file:
     json.dump(userdict, file)
   return jsonify(newitems)

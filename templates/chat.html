@@ -2,10 +2,6 @@
 {% block title %}Chat{% endblock %}
 {% block content %}
 <script type="text/javascript">
-  var typing = false;
-  var typingTimeout;
-  var socket = io.connect("https://www.mindoor.live/")
-
   function notifyMe(msg) {
       if (!("Notification" in window)) {
         // Check if the browser supports notifications
@@ -36,7 +32,7 @@
     // Check if the message is not empty
     if (message.trim() !== '') {
             // Send the message to the server via WebSocket
-      socket.send('message', message);
+      
 
             // Clear the input field
       document.getElementById('txtbar').value = '';
@@ -206,7 +202,7 @@
 {% endfor %}
 </div>
 </div>
-<form action="javascript:sendMessage()" style="width: 60%; left: 20%; position: absolute;" id="msgform">
+<form action="#" method='POST' style="width: 60%; left: 20%; position: absolute;" id="msgform">
   <div class="input-group mb-3">
   <input type="text" id="txtbar" class="form-control" placeholder="Enter your message here" aria-label="Enter your message here" name="mxg" aria-describedby="button-addon2">
   <button class="btn btn-outline-secondary" type="button" id="chatSubmit" onclick="sendMessage()" id="button-addon2">Send</button>
@@ -230,3 +226,4 @@ style="width: 65px; right: 4%; position: absolute; min-width: 65px; background-c
     </div>
 </div>
 {% endblock %}
+
