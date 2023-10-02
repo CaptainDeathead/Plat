@@ -2,69 +2,27 @@
 {% block title %}Chat{% endblock %}
 {% block content %}
 <script type="text/javascript">
-  function notifyMe(msg) {
-      if (!("Notification" in window)) {
-        // Check if the browser supports notifications
-        alert("This browser does not support desktop notification");
-      } else if (Notification.permission === "granted") {
-        // Check whether notification permissions have already been granted;
-        // if so, create a notification
-        const notification = new Notification(msg);
-        // …
-      } else if (Notification.permission !== "denied") {
-        // We need to ask the user for permission
-        Notification.requestPermission().then((permission) => {
-          // If the user accepts, let's create a notification
-          if (permission === "granted") {
-            const notification = new Notification(msg);
-            // …
-          }
-        });
-      } 
-    
-      // At last, if the user has denied notifications, and you
-      // want to be respectful there is no need to bother them anymore.
-    }
-    
-  function sendMessage() {
-    var message = document.getElementById('txtbar').value;
-
-    // Check if the message is not empty
-    if (message.trim() !== '') {
-            // Send the message to the server via WebSocket
+    function notifyMe(msg) {
+        if (!("Notification" in window)) {
+          // Check if the browser supports notifications
+          alert("This browser does not support desktop notification");
+        } else if (Notification.permission === "granted") {
+          // Check whether notification permissions have already been granted;
+          // if so, create a notification
+          const notification = new Notification(msg);
+          // …
+        } else if (Notification.permission !== "denied") {
+          // We need to ask the user for permission
+          Notification.requestPermission().then((permission) => {
+            // If the user accepts, let's create a notification
+            if (permission === "granted") {
+              const notification = new Notification(msg);
+              // …
+            }
+          });
+        } 
+      }
       
-
-            // Clear the input field
-      document.getElementById('txtbar').value = '';
-    }
-  }
-
-  socket.on('message', function(data) {
-        if (document.getElementById("usernameHead").innerHTML != data.author) {
-            console.log(document.getElementById("usernameHead").innerHTML + " " +  data.author)
-            notifyMe("(" + data.author + ') sent "' + data.message + '"');
-        }
-      
-        // Handle incoming messages from the server
-        console.log('Received message from server:', data);
-
-        // Create a new div element for the message
-        var messageDiv = document.createElement('div');
-        messageDiv.id = "srolbox";
-        messageDiv.innerHTML = `
-            <img src="/static/images/${data.profile}" width="35px" height="35px" style="border-radius: 50%; float: left;">
-            <p style="font-weight: bold; margin-bottom: 0.3rem">&nbsp;${data.author} <small><small><small>${data.time}</small></small></small></p>
-            <p style="margin-bottom: 0.3rem">&nbsp;${data.message}</p>
-        `;
-
-        // Append the new message div to the #messages element
-        var messagesContainer = document.getElementById('messages');
-        messagesContainer.appendChild(messageDiv);
-        focusAndScroll();
-  });
-  
-</script>
-<script>
     function getnew() {
       xhr = new XMLHttpRequest();
       var method = "GET"
@@ -83,7 +41,7 @@
                   //var profile = dataForCurrentKey.profile;
                     var messageDiv = document.createElement('div');
                     messageDiv.id = "srolbox";
-                    messageDiv.innerHTML = ``
+                    messageDiv.innerHTML = `
                         <img src="/static/images/${data.profile}" width="35px" height="35px" style="border-radius: 50%; float: left;">
                         <p style="font-weight: bold; margin-bottom: 0.3rem">&nbsp;${data.author} <small><small><small>${data.time}</small></small></small></p>
                         <p style="margin-bottom: 0.3rem">&nbsp;${data.message}</p>`;
@@ -91,9 +49,13 @@
                     //Append the new message div to the #messages element
                     var messagesContainer = document.getElementById('messages');
                     messagesContainer.appendChild(messageDiv);
+                    focusAndScroll();
+                    notifyMe("(" + data.author + ') sent "' + data.message + '"');
             }
         }
       }
+      }
+      xhr.send();
     }
     function checknotifs() {
       xhr = new XMLHttpRequest();
@@ -115,64 +77,7 @@
           }
         }
       }
-    }
-    function addContents() {
-        var xhr = new XMLHttpRequest();
-
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState == 4 && xhr.status == 200) {
-                var allUsers = JSON.parse(xhr.responseText);
-                var users = allUsers.online;
-                var offUsers = allUsers["offline"];
-    
-                var usersdiv = document.getElementById("usersdiv");
-                var offusersdiv = document.getElementById("offusersdiv");
-                usersdiv.innerHTML = "";
-                offusersdiv.innerHTML = "";
-                    
-                for (var i = 0; i < Object.keys(users).length; i++) {
-                    var div = document.createElement("div");
-                    div.setAttribute("id", "srolbox");
-                    var img = document.createElement("img");
-                    img.setAttribute("src", "/static/images/" + users[i]["profile"]);
-                    img.setAttribute("width", "35px");
-                    img.setAttribute("height", "35px");
-                    img.setAttribute("style", "border-radius: 50%; float: left;");
-                    var p1 = document.createElement("p");
-                    p1.setAttribute("style", "font-weight: bold; margin-bottom: 0.3rem");
-                    var p1text = document.createTextNode("\xa0" + users[i]["author"] + " ");
-                    p1.appendChild(p1text);
-                    div.appendChild(img);
-                    div.appendChild(p1);
-                    usersdiv.appendChild(div);
-                }
-
-                offUsersLoop:
-                for (var i = 0; i < Object.keys(offUsers).length; i++) {
-                    for (var j = 0; j < Object.keys(users).length; j++) {
-                        if (offUsers[i]["author"] == users[j]["author"]) {
-                            continue offUsersLoop;
-                        }
-                    }
-                    var div = document.createElement("div");
-                    div.setAttribute("id", "srolbox");
-                    var img = document.createElement("img");
-                    img.setAttribute("src", "/static/images/" + offUsers[i]["profile"]);
-                    img.setAttribute("width", "35px");
-                    img.setAttribute("height", "35px");
-                    img.setAttribute("style", "border-radius: 50%; float: left; opacity: 0.4;");
-                    var p1 = document.createElement("p");
-                    p1.setAttribute("style", "font-weight: bold; margin-bottom: 0.3rem; opacity: 0.4;");
-                    var p1text = document.createTextNode("\xa0" + offUsers[i]["author"] + " ");
-                    p1.appendChild(p1text);
-                    div.appendChild(img);
-                    div.appendChild(p1);
-                    offusersdiv.appendChild(div);
-                }
-            }
-        }
-        xhr.open('GET', '/chat/userrefresh', true);
-        xhr.send();
+      xhr.send();
     }
     function focusAndScroll() {
             // Get the input element by ID
@@ -186,8 +91,8 @@
     }
     window.onload = function() {
       focusAndScroll();
-      setInterval(checkChat, 1500);
-    }// Im bac
+      setInterval(checknotifs, 1500);
+    }
 </script>
 <div id="rolbox">
 <h5>Welcome to chat</h5>
@@ -226,4 +131,3 @@ style="width: 65px; right: 4%; position: absolute; min-width: 65px; background-c
     </div>
 </div>
 {% endblock %}
-
