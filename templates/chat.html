@@ -69,8 +69,41 @@
   
 </script>
 <script>
+    function getnew() {
+      xhr = new XMLHttpRequest();
+      var method = "GET"
+      var url = "/getnew"
+      xhr.open(method, url, true)
+
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+          var response = JSON.parse(xhr.responseText);
+          for (var key in response) {
+              if (response.hasOwnProperty(key)) {
+                  var data = response[key];
+                  //var author = dataForCurrentKey.author;
+                  //var message = dataForCurrentKey.message;
+                  //var time = dataForCurrentKey.time;
+                  //var profile = dataForCurrentKey.profile;
+                    var messageDiv = document.createElement('div');
+                    messageDiv.id = "srolbox";
+                    messageDiv.innerHTML = ``
+                        <img src="/static/images/${data.profile}" width="35px" height="35px" style="border-radius: 50%; float: left;">
+                        <p style="font-weight: bold; margin-bottom: 0.3rem">&nbsp;${data.author} <small><small><small>${data.time}</small></small></small></p>
+                        <p style="margin-bottom: 0.3rem">&nbsp;${data.message}</p>`;
+
+                    //Append the new message div to the #messages element
+                    var messagesContainer = document.getElementById('messages');
+                    messagesContainer.appendChild(messageDiv);
+            }
+        }
+      }
+    }
     function checknotifs() {
       xhr = new XMLHttpRequest();
+      var method = "GET"
+      var url = "/checknotifs"
+      xhr.open(method, url, true)
 
       xhr.onreadystatechange = function() {
         if (xhr.readyState == 4 && xhr.status == 200) {
@@ -82,7 +115,7 @@
           }
 
           if (bool == true) {
-            
+            getnew();
           }
         }
       }

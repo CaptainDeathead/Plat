@@ -320,7 +320,12 @@ def getnewmsg():
   for item in lastitems:
     value = chatdict[item]
     newitems[item] = value
-  return newitems
+  with open(ROOT_DIR + "users.json", 'r') as file:
+    userdict = json.load(file)
+  userdict[user]['notifs'] = 0
+  with open(ROOT_DIR + "users.json", 'w') as file:
+    json.dump(userdict, file)
+  return jsonify(newitems)
   
 
 @socketio.on('message')
