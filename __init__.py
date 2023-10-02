@@ -300,11 +300,12 @@ def checknotifs():
   user = session['user']
   with open(ROOT_DIR + "users.json", 'r') as file:
     userdict = json.load(file)
-  notifs = int(userdict[user]['notif'])
+  parent = find_parent_key_containing_value(userdict, user)
+  notifs = int(userdict[parent]['notif'])
   if notifs != 0:
-    return True
+    return "true"
   else:
-    return False
+    return "false"
 
 @app.route("/getnew")
 def getnewmsg():
@@ -313,7 +314,8 @@ def getnewmsg():
     userdict = json.load(file)
   with open(ROOT_DIR + "chat.json", 'r') as file:
     chatdict = json.load(file)
-  new = int(userdict[user]['notif'])
+  parent = find_parent_key_containing_value(userdict, user)
+  new = int(userdict[parent]['notif'])
   chatitems = list(chatdict.keys())
   newitems = {}
   lastitems = chatitems[-new:]
@@ -322,7 +324,7 @@ def getnewmsg():
     newitems[item] = value
   with open(ROOT_DIR + "users.json", 'r') as file:
     userdict = json.load(file)
-  userdict[user]['notif'] = 0
+  userdict[parent]['notif'] = 0
   with open(ROOT_DIR + "users.json", 'w') as file:
     json.dump(userdict, file)
   return jsonify(newitems)
